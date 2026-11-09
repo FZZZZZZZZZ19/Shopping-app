@@ -24,10 +24,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v1.0.0 \
-            release-assets/shopping-app-1.0.0.apk \
+          gh release create v1.1.0 \
+            release-assets/shopping-app-1.1.0.apk \
             release-assets/SHA256SUMS.txt \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
-            --title 'Shopping APP v1.0.0' \
+            --title 'Shopping APP v1.1.0' \
             --notes-file release-assets/RELEASE-NOTES.md
