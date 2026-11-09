@@ -1,0 +1,15 @@
+Performing Streamed Install
+Success
+Performing Streamed Install
+Success
+Success
+Device check 1 passed
+Device check 2 passed
+Device check 3 passed
+Device check 4 passed
+Device check 5 passed
+Device check 6 passed
+Device check 7 passed
+Device check 8 passed
+Device check 9 passed
+FAIL after 9 checks: java.lang.AssertionError: four WebViews must yield four parsed offers

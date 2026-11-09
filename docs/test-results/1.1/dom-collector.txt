@@ -1,0 +1,11 @@
+PASS Taobao card price cannot come from a different item
+PASS Tmall result and actual shop are read
+PASS JD card with explicit SKU supports split prices
+PASS PDD current public CSS-module card does not invent a shop or product URL
+PASS Coupon, installment and missing-price content does not become product prices
+PASS JSON-LD Product price and seller are extracted
+PASS Login and verification are reported without fabricated offers
+PASS Parent containers cannot mix prices across different products
+PASS Clearly empty pages remain empty
+PASS Hidden template prices are not searchable offers
+PASS: 10 collector DOM checks (fixtures only, no live platform login).

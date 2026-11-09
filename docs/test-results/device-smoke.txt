@@ -1,0 +1,6 @@
+Performing Streamed Install
+Success
+Performing Streamed Install
+Success
+Success
+PASS: 9 device checks: launch, navigation, save shop, checkout total, second quote, ordering, stats, persistence, clear.

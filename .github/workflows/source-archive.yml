@@ -1,0 +1,33 @@
+name: Publish complete 1.1 source archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/source-archive.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Archive complete tracked source
+        run: |
+          git archive --format=zip --prefix=Shopping-app/ \
+            --output=shopping-app-1.1.0-source.zip HEAD
+          sha256sum shopping-app-1.1.0-source.zip > shopping-app-1.1.0-source.zip.sha256
+      - name: Attach source archive and update release description
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload v1.1.0 \
+            shopping-app-1.1.0-source.zip \
+            shopping-app-1.1.0-source.zip.sha256 \
+            --repo "$GITHUB_REPOSITORY"
+          gh release edit v1.1.0 \
+            --repo "$GITHUB_REPOSITORY" \
+            --notes-file docs/RELEASE-NOTES-1.1.md

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.shopping.app.PlatformTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T12:11:11" hostname="f2a5ecd6590d" time="0.005">
+  <properties/>
+  <testcase name="safeNavigation" classname="com.shopping.app.PlatformTest" time="0.001"/>
+  <testcase name="rejectLookalikeDomains" classname="com.shopping.app.PlatformTest" time="0.001"/>
+  <testcase name="allPlatformsDetected" classname="com.shopping.app.PlatformTest" time="0.001"/>
+  <testcase name="queryEncoding" classname="com.shopping.app.PlatformTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+{
+  "name": "shopping-app-source-checks",
+  "private": true,
+  "scripts": {
+    "test:collector": "node scripts/test-collector.cjs"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.15"
+  }
+}

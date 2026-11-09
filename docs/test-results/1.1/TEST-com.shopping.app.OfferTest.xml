@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.shopping.app.OfferTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-09T12:11:11" hostname="f2a5ecd6590d" time="0.089">
+  <properties/>
+  <testcase name="cheapAccessoriesAreNotTheRequestedPhone" classname="com.shopping.app.OfferTest" time="0.024"/>
+  <testcase name="chineseBrandAndProductCanBeSeparatedInTitle" classname="com.shopping.app.OfferTest" time="0.006"/>
+  <testcase name="duplicateKeepsLatestObservedPriceNotArtificialMinimum" classname="com.shopping.app.OfferTest" time="0.006"/>
+  <testcase name="filterPreservesPlatform" classname="com.shopping.app.OfferTest" time="0.004"/>
+  <testcase name="sortsFourPlatformsNumericallyAndReverses" classname="com.shopping.app.OfferTest" time="0.001"/>
+  <testcase name="ramIsNotConfusedWithAnotherStorageVariant" classname="com.shopping.app.OfferTest" time="0.005"/>
+  <testcase name="malformedPricesAndLinksCannotBecomeRealQuotes" classname="com.shopping.app.OfferTest" time="0.036"/>
+  <testcase name="taobaoSearchCanContainTmallOffer" classname="com.shopping.app.OfferTest" time="0.001"/>
+  <testcase name="rejectsSimilarDifferentModelsAndCapacity" classname="com.shopping.app.OfferTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

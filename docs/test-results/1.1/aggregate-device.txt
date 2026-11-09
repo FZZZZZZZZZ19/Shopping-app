@@ -1,0 +1,1 @@
+PASS: 5 aggregate device checks (test fixtures only)

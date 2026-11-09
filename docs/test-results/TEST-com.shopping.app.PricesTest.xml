@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.shopping.app.PricesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T11:15:09" hostname="f2a5ecd6590d" time="0.006">
+  <properties/>
+  <testcase name="rejectFractionalCent" classname="com.shopping.app.PricesTest" time="0.004"/>
+  <testcase name="rejectCouponLargerThanCheckout" classname="com.shopping.app.PricesTest" time="0.001"/>
+  <testcase name="checkoutIncludesShippingAndCoupon" classname="com.shopping.app.PricesTest" time="0.0"/>
+  <testcase name="centsAreExact" classname="com.shopping.app.PricesTest" time="0.0"/>
+  <testcase name="rejectOversizedAmount" classname="com.shopping.app.PricesTest" time="0.001"/>
+  <testcase name="rejectNegative" classname="com.shopping.app.PricesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="platform_webpage">%1$s 官方网页</string>
+    <string name="platform_status">%1$s\n%2$s</string>
+</resources>
