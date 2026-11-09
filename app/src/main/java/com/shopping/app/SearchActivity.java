@@ -28,7 +28,7 @@ public final class SearchActivity extends Activity implements PageCollector.List
         if(state!=null){sort=state.getInt("sort",1);filter=state.getInt("filter");strict=state.getBoolean("strict",true);}
         LinearLayout root=Ui.col(this);root.setBackgroundColor(Ui.BG);setContentView(root);
         LinearLayout heading=Ui.row(this);heading.setPadding(d(12),d(10),d(12),d(6));heading.addView(Ui.button(this,"‹ 返回",false,this::finish));
-        TextView title=Ui.text(this,"四平台搜同款",19,Ui.INK,true);title.setGravity(Gravity.CENTER);Ui.weighted(heading,title);heading.addView(Ui.text(this,"1.1",12,Ui.PURPLE,true));root.addView(heading);
+        TextView title=Ui.text(this,"四平台搜同款",19,Ui.INK,true);title.setGravity(Gravity.CENTER);Ui.weighted(heading,title);heading.addView(Ui.text(this,BuildConfig.VERSION_NAME,12,Ui.PURPLE,true));root.addView(heading);
         LinearLayout search=Ui.row(this);search.setPadding(d(14),d(6),d(14),d(10));input=Ui.input(this,"商品型号、容量、颜色");input.setText(query);input.setImeOptions(EditorInfo.IME_ACTION_SEARCH);Ui.weighted(search,input);search.addView(Ui.button(this,"搜索",true,()->startSearch(input.getText().toString())));root.addView(search);
         input.setOnEditorActionListener((v,a,e)->{if(a==EditorInfo.IME_ACTION_SEARCH){startSearch(input.getText().toString());return true;}return false;});
         LinearLayout chips=Ui.row(this);chips.setPadding(d(10),0,d(10),d(8));for(Platform p:Platform.values()){TextView t=Ui.text(this,p.label+"\n点击登录",11,Color.parseColor(p.color),true);t.setGravity(Gravity.CENTER);t.setPadding(d(2),d(10),d(2),d(10));t.setMaxLines(2);t.setOnClickListener(v->openPage(p));sourceLabels[p.ordinal()]=t;Ui.weighted(chips,t);}root.addView(chips);

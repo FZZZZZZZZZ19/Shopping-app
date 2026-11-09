@@ -8,6 +8,7 @@ import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import org.json.JSONObject;
+import java.io.File;
 import java.util.*;
 
 public class MainActivity extends Activity {
@@ -168,9 +169,12 @@ public class MainActivity extends Activity {
     }
     private void empty(String icon,String title,String detail) { LinearLayout c=Ui.card(this);Ui.gap(c,20);TextView mark=Ui.text(this,icon,42,Ui.PURPLE,false);mark.setGravity(Gravity.CENTER);c.addView(mark);Ui.gap(c,18);TextView t=Ui.text(this,title,18,Ui.INK,true);t.setGravity(Gravity.CENTER);c.addView(t);Ui.gap(c,10);TextView desc=Ui.text(this,detail,13,Ui.MUTED,false);desc.setGravity(Gravity.CENTER);desc.setLineSpacing(d(4),1);c.addView(desc);Ui.gap(c,20);Ui.block(body,c); }
     private void about() {
-        title("SHOPPING APP  /  简单一点","买得更从容","你的跨平台购物小助手  ·  v1.1.0");
+        title("SHOPPING APP  /  简单一点","买得更从容","你的跨平台购物小助手  ·  v"+BuildConfig.VERSION_NAME);
         LinearLayout stats=Ui.card(this);stats.addView(Ui.text(this,store.all("shops").size()+" 家收藏店铺   ·   "+store.all("prices").size()+" 条报价",18,Ui.INK,true));Ui.block(body,stats);
-        info("搜索与价格来源","1.1 聚合搜索会打开四个平台的官方搜索页，读取页面已展示的商品标题、价格、店铺和图片，并在同一列表中筛选和排序。请在本应用内的官方网页完成登录，外部平台 APP 的登录状态通常不会共享。\n\n没有接入平台授权价格 API。页面布局不兼容、验证码、网络限制或登录要求会导致部分平台没有结果；不会补造缺失报价。店铺未展示时明确标记未知。\n\n搜索匹配只能筛选同款候选，不能保证 SKU 一致。排序使用页面展示价，起价、券后条件、运费、地区和最终结算可能不同。旧版手动比价本保留在“比价”页，与网页采集结果分别显示。");
+        LinearLayout update=Ui.card(this);update.addView(Ui.text(this,"版本更新",16,Ui.INK,true));Ui.gap(update,8);
+        update.addView(Ui.text(this,"当前 v"+BuildConfig.VERSION_NAME+" · 直接从 GitHub Releases 检查最新版本",12,Ui.MUTED,false));Ui.gap(update,12);
+        update.addView(Ui.button(this,"检查更新",true,this::checkUpdates));Ui.block(body,update);
+        info("搜索与价格来源","聚合搜索会打开四个平台的官方搜索页，读取页面已展示的商品标题、价格、店铺和图片，并在同一列表中筛选和排序。请在本应用内的官方网页完成登录，外部平台 APP 的登录状态通常不会共享。\n\n没有接入平台授权价格 API。页面布局不兼容、验证码、网络限制或登录要求会导致部分平台没有结果；不会补造缺失报价。店铺未展示时明确标记未知。\n\n搜索匹配只能筛选同款候选，不能保证 SKU 一致。排序使用页面展示价，起价、券后条件、运费、地区和最终结算可能不同。旧版手动比价本保留在“比价”页，与网页采集结果分别显示。");
         Ui.block(body,Ui.button(this,"管理四个平台登录",false,()->login(null)));
         info("隐私与本地数据","店铺、报价和搜索历史保存在本机。没有自建服务器或统计 SDK。平台网页可能使用其自身 Cookie；账号、支付和订单操作由平台处理。清除应用数据或卸载会移除本地记录。");
         Ui.block(body,Ui.button(this,"导出我的收藏与报价（JSON）",false,this::exportData));
@@ -178,6 +182,35 @@ public class MainActivity extends Activity {
         Ui.block(body,Ui.button(this,"清除平台网页登录状态",false,()->confirm("将退出内置网页中的平台登录状态，是否继续？",()->{android.webkit.CookieManager.getInstance().removeAllCookies(null);android.webkit.CookieManager.getInstance().flush();android.webkit.WebStorage.getInstance().deleteAllData();Ui.toast(this,"已清除网页 Cookie 与存储");})));
         Ui.block(body,Ui.button(this,"清空收藏、报价与搜索记录",false,()->confirm("此操作不可恢复。建议先导出备份。确定清空？",()->{store.save("shops",new ArrayList<>());store.save("prices",new ArrayList<>());store.save("history",new ArrayList<>());priceFilter="";render();})));
         TextView footer=Ui.text(this,"独立购物工具 · 与所列平台无隶属关系",11,Ui.MUTED,false);footer.setGravity(Gravity.CENTER);body.addView(footer);
+    }
+    private void checkUpdates() {
+        Ui.toast(this,"正在检查 GitHub 最新版本…");
+        Updates.check((release,error)->{
+            if(isFinishing()||isDestroyed())return;
+            if(error!=null){new AlertDialog.Builder(this).setTitle("检查更新失败").setMessage(error).setPositiveButton("打开 Release 页面",(d,w)->Ui.external(this,Updates.RELEASES_PAGE)).setNegativeButton("关闭",null).show();return;}
+            if(Versions.compare(release.tag,BuildConfig.VERSION_NAME)<=0){new AlertDialog.Builder(this).setTitle("已是最新版本").setMessage("当前 v"+BuildConfig.VERSION_NAME+"，GitHub 最新 "+release.tag+"。").setPositiveButton("知道了",null).show();return;}
+            String notes=release.body==null?"":plainNotes(release.body.trim());if(notes.length()>3000)notes=notes.substring(0,3000)+"…";
+            String size=release.apkSize>0?String.format(Locale.ROOT,"%.1f MB",release.apkSize/1048576.0):"大小未知";
+            new AlertDialog.Builder(this).setTitle("发现新版本 "+release.tag).setMessage("当前 v"+BuildConfig.VERSION_NAME+" → "+release.tag+"（"+size+"）\n\n"+(notes.isEmpty()?"本次 Release 没有填写说明。":notes)).setPositiveButton("下载并安装",(d,w)->downloadAndInstall(release)).setNeutralButton("浏览器打开",(d,w)->Ui.external(this,release.page)).setNegativeButton("稍后",null).show();
+        });
+    }
+    private void downloadAndInstall(final Updates.Release release) {
+        File dir=new File(getFilesDir(),"updates");dir.mkdirs();
+        final AlertDialog progress=new AlertDialog.Builder(this).setTitle("正在下载 "+release.tag).setMessage("准备中…").setCancelable(false).create();progress.show();
+        Updates.download(release,new File(dir,safeFileName(release.apkName)),(percent,down,total)->{if(isFinishing()||isDestroyed())return;progress.setMessage(percent<0?"已下载 "+(down/1024)+" KB":"已下载 "+percent+"%（"+(down/1024)+" / "+(total/1024)+" KB）");},(file,error)->{
+            if(isFinishing()||isDestroyed())return;progress.dismiss();
+            if(error!=null){new AlertDialog.Builder(this).setTitle("下载失败").setMessage(error).setPositiveButton("重试",(d,w)->downloadAndInstall(release)).setNegativeButton("打开 Release 页面",(d,w)->Ui.external(this,release.page)).show();return;}
+            Updates.install(this,file);
+        });
+    }
+    private static String plainNotes(String notes) {
+        return notes.replaceAll("(?m)^#{1,6}\\s*","").replace("**","").replace("__","")
+                .replaceAll("`([^`]*)`","$1").replaceAll("\\[(.*?)\\]\\((.*?)\\)","$1 ($2)").trim();
+    }
+    private static String safeFileName(String name) {
+        String n=name==null?"shopping-app.apk":name.replaceAll("[^A-Za-z0-9._-]","_");
+        if(!n.toLowerCase(Locale.ROOT).endsWith(".apk"))n=n+".apk";
+        return n;
     }
     private void info(String title,String content) { LinearLayout card=Ui.card(this);card.addView(Ui.text(this,title,16,Ui.INK,true));Ui.gap(card,12);TextView text=Ui.text(this,content,13,Ui.MUTED,false);text.setLineSpacing(d(5),1);card.addView(text);Ui.block(body,card); }
     private void confirm(String message,Runnable action) {new AlertDialog.Builder(this).setMessage(message).setPositiveButton("确定",(a,n)->action.run()).setNegativeButton("取消",null).show();}

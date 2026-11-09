@@ -1,11 +1,13 @@
-name: Publish complete 1.1 source archive
+name: Attach complete source archive
 
 on:
   push:
-    branches: [main]
-    paths:
-      - '.github/workflows/source-archive.yml'
+    tags: ['v*']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag, for example v1.11.0'
+        required: true
 
 permissions:
   contents: write
@@ -18,16 +20,17 @@ jobs:
       - name: Archive complete tracked source
         run: |
           git archive --format=zip --prefix=Shopping-app/ \
-            --output=shopping-app-1.1.0-source.zip HEAD
-          sha256sum shopping-app-1.1.0-source.zip > shopping-app-1.1.0-source.zip.sha256
-      - name: Attach source archive and update release description
+            --output=shopping-app-source.zip HEAD
+          sha256sum shopping-app-source.zip > shopping-app-source.zip.sha256
+      - name: Attach source archive
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
         run: |
-          gh release upload v1.1.0 \
-            shopping-app-1.1.0-source.zip \
-            shopping-app-1.1.0-source.zip.sha256 \
-            --repo "$GITHUB_REPOSITORY"
-          gh release edit v1.1.0 \
-            --repo "$GITHUB_REPOSITORY" \
-            --notes-file docs/RELEASE-NOTES-1.1.md
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Shopping APP $TAG" --generate-notes || true
+          for attempt in 1 2 3 4 5; do
+            gh release upload "$TAG" shopping-app-source.zip shopping-app-source.zip.sha256 --clobber && exit 0
+            sleep 5
+          done
+          exit 1

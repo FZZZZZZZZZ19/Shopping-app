@@ -1,12 +1,32 @@
-# Shopping APP 1.1.0
+# Shopping APP 1.11.0
 
-网购商品价格各大平台查询APP安卓。完整 Android 工程源码、构建脚本、测试与文档现已在此仓库提供。
+网购商品价格各大平台查询APP安卓。完整 Android 工程源码、构建脚本、测试与文档在此仓库维护。
 
 一次搜索，汇总淘宝、拼多多、京东、天猫搜索页上的商品、平台、店铺与价格，并按价格排序。Android 8.0 及以上可用。
 
 ## 安装与升级
 
-从 [GitHub Releases](https://github.com/FZZZZZZZZZ19/Shopping-app/releases) 下载 `shopping-app-1.1.0.apk`。包名仍为 `com.shopping.app`，versionCode 从 1 升到 2，使用与 1.0 相同的试用签名，可直接覆盖升级；收藏和旧版手动报价本保留。
+从 [GitHub Releases](https://github.com/FZZZZZZZZZ19/Shopping-app/releases) 下载 `shopping-app-1.11.0.apk`。
+
+**1.11.0 起改用正式发布证书，与 1.1.0 的试用签名不同。** 已安装 1.1.0 或更早版本的用户不能直接覆盖升级，请：
+
+1. 在旧版“我的”页导出 JSON 备份；
+2. 卸载旧版（会清除本机收藏、报价和搜索历史）；
+3. 安装 1.11.0；
+4. 在新版“我的”页导入备份。
+
+从 1.11.0 开始，后续版本可以覆盖升级；应用内更新也会校验下载的 APK 并拉起系统安装器。首次安装时，系统可能要求允许“Shopping APP”安装未知应用。
+
+## 应用内更新
+
+“我的”页 → “版本更新” → “检查更新”：
+
+- 直连 `https://api.github.com/repos/FZZZZZZZZZ19/Shopping-app/releases/latest` 读取最新 Release；
+- 显示版本号、发布说明和 APK 大小；
+- 发现新版本后可应用内下载，下载完成后拉起系统安装器；
+- 检查或下载失败时，可直接打开 GitHub Release 页面手动下载。
+
+GitHub API 未登录访问限制为每 IP 每小时 60 次；触发限制时会提示稍后再试。更新检查不会上传任何本机数据。
 
 ## 使用
 
@@ -18,28 +38,30 @@
 
 ## 数据来源与限制
 
-**1.1 使用网页登录后的可见页面采集，不是平台授权 API。不能保证四个平台的网页在每种设备和账号状态下都可识别。**
+**使用网页登录后的可见页面采集，不是平台授权 API。不能保证四个平台的网页在每种设备和账号状态下都可识别。**
 
 - 仅读取商品卡片 DOM 与公开 JSON-LD，不调用未公开接口，不读取 Cookie、密码、会话令牌或网页私有 JS 状态，不绕过验证码。
 - 访问受限、登录要求、验证码、页面布局变化或没有展示商品字段时，分别提示状态；不生成假价格补齐四个平台。
 - 页面未展示店铺名时明确显示“页面未展示店铺名”。没有可识别商品链接时允许回到来源搜索页核对。
 - 搜索与标题匹配得到的是**同款候选**，不能证明 SKU 完全一致。严格模式可排除部分型号/容量差异，仍应核对颜色、容量、成色与套餐。
 - 排序使用页面展示价，可能是起价或有条件优惠价，不保证为指定 SKU 的结算价；运费、地区、会员和优惠门槛可能不同。
-- 只汇总已加载的结果；不是四个平台的全量商品目录。真实四平台登录后端到端结果还需要在用户手机上验证，自动化页面测试不能代替这一验证。
+- 只汇总已加载的结果；不是四个平台的全量商品目录。真实四平台登录后端到端结果仍需要在用户手机上验证，自动化页面测试不能代替这一验证。
 
 ## 源码与发布包
 
 `app/src/main/` 包含全部应用实现，`app/src/test/` 和 `app/src/androidTest/` 包含测试，根目录含 Gradle Wrapper 和构建配置。可以克隆 `main` 分支或下载该分支 ZIP 构建。源码不包含签名私钥、账号登录数据或本机构建缓存。
 
-历史 `v1.0.0`、`v1.1.0` 标签在源码补齐前创建，因此这些标签自动生成的 Source code 压缩包仍是当时的发布文件快照。完整源码请使用 `main` 分支，或下载 [1.1 完整源码 ZIP](https://github.com/FZZZZZZZZZ19/Shopping-app/releases/download/v1.1.0/shopping-app-1.1.0-source.zip)。已发布 APK 保持原文件与签名。自行构建的默认调试证书可能不同，覆盖已安装发布版需要相同签名。
+发布 APK 由 `.github/workflows/publish-apk.yml` 在推送 `v*` 标签时从源码构建并签名；签名密钥通过仓库 Secrets 注入，不进入源码。标签自动生成的 Source code 压缩包与 Release 附件都可供审计。
 
 ## 本地数据
 
-原 1.0 的店铺收藏、手动比价本、搜索历史、JSON 备份导入导出继续保留。手动报价与网页采集结果分别显示。平台登录由系统 WebView 管理，Cookie 留在本机；“我的”页面可清除登录状态。没有自建数据上传服务器、统计 SDK 或广告。
+店铺收藏、手动比价本、搜索历史、JSON 备份导入导出。手动报价与网页采集结果分别显示。平台登录由系统 WebView 管理，Cookie 留在本机；“我的”页面可清除登录状态。没有自建数据上传服务器、统计 SDK 或广告。
+
+应用内更新下载的 APK 保存在应用私有 `files/updates/` 目录，卸载时随应用清除；不会写入公共下载目录。
 
 ## 构建与检查
 
-需要 JDK 17/21、Android SDK 35。
+需要 JDK 17+、Android SDK 35。
 
 ```sh
 export ANDROID_HOME=/path/to/android-sdk
@@ -56,4 +78,21 @@ npm ci --ignore-scripts
 npm run test:collector
 ```
 
-`MainActivity` 为首页/旧版数据功能，`SearchActivity` 为聚合列表，`PageCollector` 管理四个平台的 WebView，`collect-offers.js` 读取页面公开 DOM，`Offer` 负责匹配/去重/排序，`OfferParser` 校验金额和字段。测试证据与实际限制见 [docs/VALIDATION-1.1.md](docs/VALIDATION-1.1.md)。
+### 签名发布
+
+正式签名通过 `keystore.properties`（已被 `.gitignore` 排除）或环境变量提供：
+
+```properties
+storeFile=keystore/shopping-release.jks
+storePassword=…
+keyAlias=shopping
+keyPassword=…
+```
+
+```sh
+./gradlew assembleRelease
+```
+
+CI 使用仓库 Secrets：`SHOPPING_KEYSTORE_BASE64`、`SHOPPING_KEYSTORE_PASSWORD`、`SHOPPING_KEY_ALIAS`、`SHOPPING_KEY_PASSWORD`。发布密钥请离线备份；丢失后无法再发布可覆盖升级的版本。
+
+`MainActivity` 为首页/旧版数据功能，`SearchActivity` 为聚合列表，`PageCollector` 管理四个平台的 WebView，`collect-offers.js` 读取页面公开 DOM，`Offer` 负责匹配/去重/排序，`OfferParser` 校验金额和字段，`Updates` 负责 GitHub Release 检查与下载，`Versions` 负责版本比较。测试证据与实际限制见 [docs/VALIDATION-1.11.md](docs/VALIDATION-1.11.md)。

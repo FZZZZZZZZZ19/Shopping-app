@@ -2,22 +2,53 @@
 
 仓库：<https://github.com/FZZZZZZZZZ19/Shopping-app>。
 
-`main` 分支维护完整 Android 应用源码、Gradle 构建配置、测试、文档和 APK 发布文件。签名私钥、登录数据、构建缓存不属于公开源码。
+`main` 分支维护完整 Android 应用源码、Gradle 构建配置、测试、文档和发布文件。签名私钥、登录数据、构建缓存不属于公开源码。
 
 ## 构建与检查
 
 ```sh
-./gradlew assembleDebug testDebugUnitTest lintDebug
+export ANDROID_HOME=/path/to/android-sdk
+./gradlew assembleDebug assembleDebugAndroidTest testDebugUnitTest lintDebug
 ```
 
-DOM 采集测试和设备测试的运行方式见 README。CI 会构建 APK、运行单元测试与 Lint，保存 APK 和报告作为工作流产物。自行构建的默认调试签名不保证与已发布 APK 相同。
+DOM 采集测试和设备测试的运行方式见 README。CI 会构建 debug APK、运行单元测试与 Lint，保存 APK 和报告作为工作流产物。
+
+## 正式签名
+
+1.11.0 起使用正式 release keystore。本地签名材料放在仓库根目录的 `keystore.properties`（已被 `.gitignore` 排除）：
+
+```properties
+storeFile=keystore/shopping-release.jks
+storePassword=…
+keyAlias=shopping
+keyPassword=…
+```
+
+也可以通过环境变量提供：`SHOPPING_KEYSTORE_PATH`、`SHOPPING_KEYSTORE_PASSWORD`、`SHOPPING_KEY_ALIAS`、`SHOPPING_KEY_PASSWORD`。
+
+密钥库与密码必须离线备份。丢失后无法再发布能覆盖升级的 APK，只能换签名并要求用户重装。GitHub Actions 使用以下 Secrets：
+
+| Secret | 内容 |
+| --- | --- |
+| `SHOPPING_KEYSTORE_BASE64` | `.jks` 文件的 base64 |
+| `SHOPPING_KEYSTORE_PASSWORD` | 密钥库密码 |
+| `SHOPPING_KEY_ALIAS` | `shopping` |
+| `SHOPPING_KEY_PASSWORD` | 密钥密码 |
 
 ## 发布 APK
 
-本地通过检查后，把 APK 复制到 `release-assets/`，更新 SHA256SUMS、发布说明及 `.github/workflows/publish-apk.yml` 中的版本号。该工作流使用仓库自身的 Token 上传 Release 附件。只修改普通源码不会重新发布已有版本。
+发布由 `.github/workflows/publish-apk.yml` 完成，不再提交预构建 APK：
 
-1.1.0 使用 versionCode 2，发布 APK 保持与 1.0 相同的签名证书。发布后下载附件，校验 SHA-256 并与本地安装包逐字节比较。保留旧版本 Release，不覆盖旧安装包。
+1. 更新 `app/build.gradle` 的 `versionCode` / `versionName`；
+2. 在 `docs/RELEASE-NOTES-<versionName>.md` 写发布说明；
+3. 提交并推送 `main`；
+4. 推送标签：`git tag v<versionName> && git push origin v<versionName>`。
 
-## 历史标签
+工作流会运行 DOM 测试、单元测试与 Lint，构建并签名 `assembleRelease`，校验证书 DN 为 `CN=Shopping APP`，然后创建 Release 并上传 `shopping-app-<versionName>.apk` 与 `SHA256SUMS.txt`。`.github/workflows/source-archive.yml` 会在同一标签上附加完整源码 ZIP 与校验文件。
 
-`v1.0.0` 与 `v1.1.0` 在完整源码上传前创建，标签指向原始发布提交，自动生成的 Source code 压缩包仍只包含当时的文件。完整源码请使用 `main` 分支、明确的源码提交，或 Release 附件 `shopping-app-1.1.0-source.zip`。`.github/workflows/source-archive.yml` 用于附加完整源码与校验文件，不修改原始标签或 APK。后续版本应在完整源码提交上创建新标签。
+应用内更新读取的是最新 Release，因此发布说明会直接显示在更新弹窗里；请写清楚兼容性、签名变更和数据迁移要求。
+
+## 签名变更记录
+
+- 1.0.0 / 1.1.0：Android Debug 证书（试用签名）。
+- 1.11.0 起：正式 release 证书。由于签名不同，1.11.0 无法覆盖安装 1.1.0；旧版用户需导出备份、卸载、安装 1.11.0 后导入。
